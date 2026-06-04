@@ -1,5 +1,6 @@
 # Internal — never deploy to the public repo
 GMBIT_CONCEPT.md
+server/
 _*-private/
 *-internal.*
 
