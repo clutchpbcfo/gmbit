@@ -87,7 +87,14 @@
   .introhint{margin-top:18px;font-size:12px;color:#79839a;line-height:1.5}
   .backlink{position:fixed;left:16px;bottom:18px;z-index:11;font-size:12px;font-weight:600;color:#aeb6c6;background:rgba(14,18,28,.62);border:1px solid rgba(255,255,255,.09);padding:8px 13px;border-radius:999px;text-decoration:none;backdrop-filter:blur(14px)}
   .backlink:hover{color:var(--gold);border-color:var(--gold-d)}
-  @media (max-width:600px){#board4{top:60px;width:150px;padding:8px}.logo{font-size:18px}.intrologo{font-size:38px}.backlink{font-size:11px;padding:6px 10px}}
+  @media (max-width:600px){#board4{top:60px;width:150px;padding:8px}.logo{font-size:18px}.intrologo{font-size:38px}.backlink{font-size:11px;padding:6px 10px}#feedback{padding:6px 10px;font-size:11px}}
+  #feedback{position:fixed;right:16px;bottom:18px;z-index:11;font-size:12px;font-weight:600;color:#aeb6c6;background:rgba(14,18,28,.62);border:1px solid rgba(255,255,255,.09);padding:8px 13px;border-radius:999px;cursor:pointer;font-family:var(--ui);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  #feedback:hover{color:var(--gold);border-color:var(--gold-d)}
+  #fbMsg,.fbinput{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#eef1f7;font-family:var(--ui);font-size:14px;padding:11px 13px;border-radius:11px;outline:none;resize:vertical}
+  #fbMsg:focus,.fbinput:focus{border-color:var(--gold-d)}
+  .fbinput{margin-top:10px}
+  .fbstars{display:flex;gap:6px;justify-content:center;margin:4px 0 14px;font-size:26px;color:#39414f;cursor:pointer}
+  .fbstars span.on{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -107,6 +114,7 @@
 </div></div>
 
 <a class="backlink" href="index.html">&#8592; 1v1 Chess</a>
+<button id="feedback" type="button">&#10022; Feedback</button>
 
 <div class="top">
   <div class="brand glass" style="padding:8px 14px;border-radius:14px"><span class="logo">GMB<b>I</b>T <span class="sub">4P</span></span></div>
@@ -129,6 +137,16 @@
   <h2 id="overTitle">Winner</h2><p id="overSub"></p>
   <div class="finalscores" id="finalScores"></div>
   <div class="row"><button class="btn primary" id="btnRematch">Rematch</button><a class="btn" href="index.html">1v1 Chess</a></div>
+</div></div>
+<div class="ov" id="fbOv"><div class="card glass" style="width:min(420px,93vw);text-align:left">
+  <h2 style="text-align:center">Send feedback</h2>
+  <p style="text-align:center">What felt great, what to fix.</p>
+  <div class="fbstars" id="fbStars"><span data-v="1">&#9733;</span><span data-v="2">&#9733;</span><span data-v="3">&#9733;</span><span data-v="4">&#9733;</span><span data-v="5">&#9733;</span></div>
+  <textarea id="fbMsg" maxlength="1000" rows="4" placeholder="Your feedback…"></textarea>
+  <input id="fbName" class="fbinput" maxlength="24" placeholder="Name (optional)" autocomplete="off">
+  <div id="fbThanks" style="display:none;text-align:center;color:var(--good);font-weight:700;padding:10px 0">Thanks — sent to the team! 🙏</div>
+  <div class="row" style="margin-top:14px"><button class="btn primary" id="fbSend">Send</button><button class="btn" id="fbClose">Close</button></div>
+  <div style="text-align:center;margin-top:12px"><a href="https://x.com/ClutchPBCFO" target="_blank" rel="noopener" style="font-size:12px;color:#8b93a6">or DM @ClutchPBCFO on X</a></div>
 </div></div>
 
 <script src="three.min.js"></script>
@@ -481,6 +499,14 @@ $('botSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$('b
 $('introHumans').onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$('introHumans').querySelectorAll('button')].forEach(x=>x.classList.remove('on'));b.classList.add('on');state.humans=+b.dataset.h;};
 $('btnRematch').onclick=newGame;
 $('playBtn').onclick=()=>{$('intro').style.display='none';if(musicOn)startMusic();newGame();};
+/* feedback form */
+const FBAPI='https://gmbit-api.clutchpbcfo.workers.dev';
+let fbRating=0;
+function openFb(){$('fbThanks').style.display='none';$('fbMsg').value='';$('fbSend').style.display='';$('fbSend').disabled=false;fbRating=0;[...document.querySelectorAll('#fbStars span')].forEach(s=>s.classList.remove('on'));try{const n=localStorage.getItem('gmbit_name');if(n)$('fbName').value=n;}catch(e){}$('fbOv').classList.add('show');}
+$('feedback').onclick=openFb;
+$('fbClose').onclick=()=>$('fbOv').classList.remove('show');
+$('fbStars').onclick=e=>{const s=e.target.closest('span');if(!s)return;fbRating=+s.dataset.v;[...$('fbStars').children].forEach(x=>x.classList.toggle('on',+x.dataset.v<=fbRating));};
+$('fbSend').onclick=async()=>{const msg=$('fbMsg').value.trim();if(!msg){$('fbMsg').focus();return;}const name=$('fbName').value.trim();if(name){try{localStorage.setItem('gmbit_name',name);}catch(e){}}$('fbSend').disabled=true;try{await fetch(FBAPI+'/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({game:'4p',name,msg,rating:fbRating})});}catch(e){}$('fbThanks').style.display='block';$('fbSend').style.display='none';setTimeout(()=>$('fbOv').classList.remove('show'),1500);};
 window.addEventListener('pointerdown',()=>{if(musicOn)startMusic();},{once:true});
 setTimeout(()=>{const h=$('hintBar');if(h)h.style.opacity='0';},6500);
 
