@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>GMBIT — 3D Chess Arena</title>
-<meta name="description" content="GMBIT — premium immersive 3D chess. Play in a cinematic arena, climb the ranks, review every game. Every move is a wager.">
+<title>ROOK — 3D Chess Arena</title>
+<meta name="description" content="ROOK — premium immersive 3D chess. Play in a cinematic arena, climb the ranks, review every game. Every move is a wager.">
 <meta name="theme-color" content="#0b0e16">
-<meta property="og:title" content="GMBIT — 3D Chess Arena">
+<meta property="og:title" content="ROOK — 3D Chess Arena">
 <meta property="og:description" content="Premium immersive 3D chess. Every move is a wager.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://clutchpbcfo.github.io/rook/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="GMBIT — 3D Chess Arena">
+<meta name="twitter:title" content="ROOK — 3D Chess Arena">
 <meta name="twitter:description" content="Premium immersive 3D chess. Every move is a wager.">
 <meta name="twitter:image" content="https://clutchpbcfo.github.io/rook/og-image.png">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -141,7 +141,7 @@ if(sk)sk.addEventListener('click',reveal);
 <div id="checkFlash"></div>
 <div class="loading" id="loading"><div class="spin"></div><div>Entering the arena…</div></div>
 <div id="intro"><div class="introcard">
-  <div class="intrologo">GMB<b>I</b>T</div>
+  <div class="intrologo">RO<b>O</b>K</div>
   <div class="introtag">Premium 3D chess &middot; every move is a wager</div>
   <div class="introfields">
     <input id="nameInput" maxlength="18" placeholder="Your handle" autocomplete="off" spellcheck="false">
@@ -154,7 +154,7 @@ if(sk)sk.addEventListener('click',reveal);
 <button id="feedback" type="button" style="cursor:pointer;font-family:var(--ui)">&#10022; Feedback</button>
 
 <div class="top">
-  <div class="brand glass" style="padding:9px 15px;border-radius:999px"><span class="logo">GMB<b>I</b>T</span></div>
+  <div class="brand glass" style="padding:9px 15px;border-radius:999px"><a class="logo" href="https://clutchpbcfo.github.io/arcade-shell/" style="text-decoration:none" title="back to the arcade">RO<b>O</b>K</a></div>
   <div class="turnpill glass" id="turnPill"><span class="dotc"></span><span id="turnText">Your move</span></div>
   <div class="wallet glass" id="wallet">◆ <span id="diaAmt">10,000</span></div>
 </div>
@@ -190,7 +190,7 @@ if(sk)sk.addEventListener('click',reveal);
     <div class="rbest" id="rBest"></div>
     <div class="rtip" id="rTip"></div>
   </div>
-  <div class="row" style="margin-top:16px"><button class="btn primary" id="btnRematch">Rematch</button><button class="btn" id="btnCloseOv">Close</button></div>
+  <div class="row" style="margin-top:16px"><button class="btn primary" id="btnRematch">Rematch</button><button class="btn" id="btnCloseOv">Close</button><a class="btn" href="https://clutchpbcfo.github.io/arcade-shell/" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center">⌂ Arcade</a></div>
 </div></div>
 <div class="ov" id="findOv"><div class="card glass"><div class="findwrap">
   <div class="spin"></div>
@@ -212,7 +212,7 @@ if(sk)sk.addEventListener('click',reveal);
 
 <script src="three.min.js"></script>
 <script>
-/* ===== GMBIT engine — perft-verified (startpos d4=197281, Kiwipete d3=97862) ===== */
+/* ===== ROOK engine — perft-verified (startpos d4=197281, Kiwipete d3=97862) ===== */
 const KNIGHT=[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
 const KINGD=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
 const ROOK=[[-1,0],[1,0],[0,-1],[0,1]];const BISHOP=[[-1,-1],[-1,1],[1,-1],[1,1]];const QUEEN=ROOK.concat(BISHOP);
@@ -422,7 +422,7 @@ function endGame(winner,reason){
   else if(state.online){const you=winner===state.human;accent=you;title=you?'Victory':'Defeat';
     sub=reason==='time'?(you?'Your opponent flagged — out of time.':'You ran out of time.'):reason==='resign'?(you?'Your opponent resigned.':'You resigned.'):reason==='abandon'?(you?'Your opponent left the match.':'You left the match.'):(you?'Checkmate — well played.':'Checkmate — better luck next time.');
     if(you)state.dia+=500;}
-  else if(state.vsAI){const youWin=winner===state.human;accent=youWin;title='Checkmate';sub=youWin?'You win the arena.':'GMBIT takes this one.';if(youWin)state.dia+=500;}
+  else if(state.vsAI){const youWin=winner===state.human;accent=youWin;title='Checkmate';sub=youWin?'You win the arena.':'ROOK takes this one.';if(youWin)state.dia+=500;}
   else{title='Checkmate';sub=(winner==='w'?'White':'Black')+' wins.';}
   try{localStorage.setItem('gmbit_dia',state.dia);}catch(e){}
   $('overTitle').innerHTML=accent?'<span class="accent">'+title+'</span>':title;
@@ -459,7 +459,7 @@ function updateHUD(){
   $('diaAmt').textContent=state.dia.toLocaleString('en-US');
   const pill=$('turnPill'),txt=$('turnText');
   if(state.over){txt.textContent='Game over';pill.classList.remove('think');return;}
-  if(state.thinking){txt.textContent='GMBIT is thinking…';pill.classList.add('think');return;}
+  if(state.thinking){txt.textContent='ROOK is thinking…';pill.classList.add('think');return;}
   if(state.online){
     if(!state.net||state.net.status!=='active'){pill.classList.remove('think');txt.textContent='Waiting for opponent…';return;}
     const mineT=eng.turn===state.human;pill.classList.toggle('think',!mineT);
@@ -467,7 +467,7 @@ function updateHUD(){
   }
   pill.classList.remove('think');
   const human=!state.vsAI||eng.turn===state.human;
-  txt.textContent=state.vsAI?(human?(eng.inCheck(eng.turn)?'Your move — check!':'Your move'):'GMBIT to move'):((eng.turn==='w'?'White':'Black')+' to move');
+  txt.textContent=state.vsAI?(human?(eng.inCheck(eng.turn)?'Your move — check!':'Your move'):'ROOK to move'):((eng.turn==='w'?'White':'Black')+' to move');
 }
 
 /* ===== input ===== */
@@ -615,7 +615,7 @@ async function resyncFromServer(){
   if(s.status==='over'&&!state.over)finishOnline(s.result,s.reason);
 }
 
-/* debug/test hook removed for production anti-cheat (was: window.GMBIT engine-injection + state access) */
+/* debug/test hook removed for production anti-cheat (was: window.ROOK engine-injection + state access) */
 </script>
 </body>
 </html>
