@@ -595,13 +595,7 @@ async function resyncFromServer(){
   if(s.status==='over'&&!state.over)finishOnline(s.result,s.reason);
 }
 
-/* ===== test hook ===== */
-window.GMBIT={eng,state,newGame,
-  doUCI:(u)=>{const from=eng.algToIdx(u.slice(0,2)),to=eng.algToIdx(u.slice(2,4)),pr=u[4]?u[4].toUpperCase():'';const m=eng.legalMoves().find(x=>x.from===from&&x.to===to&&(pr?x.promotion===pr:!x.promotion));if(!m)return false;doMove(m);return true;},
-  setView:(a)=>{azTarget=a;az=a;},
-  squareClick,meshCount:()=>Object.keys(meshAt).length,
-  legalCount:()=>eng.legalMoves().length,
-  startQuickMatch:()=>startQuickMatch(),getNet:()=>state.net,clockNow,pollState:()=>pollState()};
+/* debug/test hook removed for production anti-cheat (was: window.GMBIT engine-injection + state access) */
 </script>
 </body>
 </html>
