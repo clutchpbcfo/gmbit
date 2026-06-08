@@ -459,7 +459,7 @@ function renderScores(){
   }
 }
 function showOver(){
-  refreshDead();drawHL();
+  refreshDead();drawHL();postFFA();
   const w=eng.winner;
   $('overTitle').innerHTML='<span class="accent">'+(state.isHuman(w)&&w<state.humans?(state.humans===1&&w===0?'You win':CNAME[w]+' wins'):CNAME[w]+' wins')+'</span>';
   $('overSub').textContent='Last army standing in the arena.';
@@ -486,7 +486,7 @@ el.addEventListener('wheel',e=>{e.preventDefault();radius=Math.max(11,Math.min(3
 window.addEventListener('resize',()=>{renderer.setSize(window.innerWidth,window.innerHeight);cam.aspect=window.innerWidth/window.innerHeight;cam.updateProjectionMatrix();});
 
 /* =================== controls =================== */
-function newGame(){eng.setup();state.over=false;state.sel=-1;state.legal=[];state.animating=false;state.botBusy=false;tweens.length=0;$('overOv').classList.remove('show');az=azTarget=0;buildAll();drawHL();updateHUD();maybeBot();}
+function newGame(){eng.setup();state.over=false;state._ffaPosted=false;state.sel=-1;state.legal=[];state.animating=false;state.botBusy=false;tweens.length=0;$('overOv').classList.remove('show');az=azTarget=0;buildAll();drawHL();updateHUD();maybeBot();}
 function resign(){if(eng.over)return;// human seat 0 (you) resigns → eliminate
   let me=-1;for(let c=0;c<state.humans;c++){if(eng.alive[c]){me=c;break;}}if(me<0)return;eng.alive[me]=false;eng.elim[me]='resigned';refreshDead();
   if(eng.aliveCount()<=1){eng.over=true;eng.winner=eng.firstAlive();drawHL();updateHUD();showOver();return;}
@@ -501,6 +501,9 @@ $('btnRematch').onclick=newGame;
 $('playBtn').onclick=()=>{$('intro').style.display='none';if(musicOn)startMusic();newGame();};
 /* feedback form */
 const FBAPI='https://gmbit-api.clutchpbcfo.workers.dev';
+const ROOKAPI='https://www.stakit.app/api/rook';
+function rookHandle(){try{const n=localStorage.getItem('gmbit_name');if(n)return n;}catch(e){}const g='Guest-'+Math.random().toString(36).slice(2,6).toUpperCase();try{localStorage.setItem('gmbit_name',g);}catch(e){}return g;}
+function postFFA(){if(state._ffaPosted)return;state._ffaPosted=true;try{fetch(ROOKAPI+'?op=casual',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({handle:rookHandle(),mode:'ffa',won:eng.winner===0})});}catch(e){}}
 let fbRating=0;
 function openFb(){$('fbThanks').style.display='none';$('fbMsg').value='';$('fbSend').style.display='';$('fbSend').disabled=false;fbRating=0;[...document.querySelectorAll('#fbStars span')].forEach(s=>s.classList.remove('on'));try{const n=localStorage.getItem('gmbit_name');if(n)$('fbName').value=n;}catch(e){}$('fbOv').classList.add('show');}
 $('feedback').onclick=openFb;
