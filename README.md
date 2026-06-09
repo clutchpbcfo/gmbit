@@ -1,8 +1,8 @@
-# GMBIT — 3D Chess Arena
+# ROOK — 3D Chess Arena
 
 Premium, immersive 3D chess in the browser. Orbit a cinematic board, play a built-in AI at three strengths, with animated moves, capture effects, a check alert, soft ambient music, and a post-game review that scores your accuracy and coaches your improvement.
 
-**Live:** `https://clutchpbcfo.github.io/gmbit/` _(after you deploy — see below)_
+**Live:** `https://clutchpbcfo.github.io/rook/`
 
 ## Play
 - **Drag** to orbit the board · **pinch / scroll** to zoom
@@ -17,27 +17,27 @@ Premium, immersive 3D chess in the browser. Orbit a cinematic board, play a buil
 - `og-image.png` — social share preview
 - `index-classic.html` — the clean 2D version (optional fallback)
 
-> `GMBIT_CONCEPT.md` is **internal strategy — do NOT commit it** to the public repo. The included `.gitignore` already excludes it.
+> `ROOK_CONCEPT.md` is **internal strategy — do NOT commit it** to the public repo. The included `.gitignore` already excludes it.
 
 ## Deploy to GitHub Pages
-First create an **empty** repo at `github.com/clutchpbcfo/gmbit` (no README). Then, from this folder:
+Repo lives at `github.com/clutchpbcfo/rook`. From this folder:
 
 ```bash
 git init
 git add index.html three.min.js favicon.svg og-image.png index-classic.html README.md .gitignore
-git commit -m "GMBIT 3D — live build for testers"
+git commit -m "ROOK 3D — live build for testers"
 git branch -M main
-git remote add origin https://github.com/clutchpbcfo/gmbit.git
+git remote add origin https://github.com/clutchpbcfo/rook.git
 git push -u origin main
 ```
 
 On GitHub: **Settings → Pages → Source: `main` / `/ (root)` → Save.**
-Live in ~1 minute at **`https://clutchpbcfo.github.io/gmbit/`**.
+Live in ~1 minute at **`https://clutchpbcfo.github.io/rook/`**.
 
-(If you name the repo something other than `gmbit`, update the `og:image` / `twitter:image` URLs in `index.html` to match.)
+(If you ever rename the repo, update the `og:image` / `twitter:image` URLs in `index.html` to match.)
 
-### Optional: custom domain (gmbit.app)
-Add a file named `CNAME` containing `gmbit.app`, push it, then point the domain's DNS at GitHub Pages per GitHub's instructions. Update the `og:image` URLs in `index.html` to `https://gmbit.app/og-image.png`.
+### Optional: custom domain (rook.app or similar)
+Add a file named `CNAME` containing your domain, push it, then point the domain's DNS at GitHub Pages per GitHub's instructions. Update the `og:image` URLs in `index.html` to match.
 
 ## Tester feedback
 The in-game **Feedback** button links to X (**@ClutchPBCFO**). To route feedback to a Telegram group instead, change the `href` on the `#feedback` link in `index.html`.

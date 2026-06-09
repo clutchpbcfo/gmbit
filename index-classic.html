@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GMBIT — Every move is a wager</title>
+<title>ROOK — Every move is a wager</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -217,7 +217,7 @@
     </div>
 
     <div class="pstrip" id="seatTop">
-      <div class="pp"><span class="pav" id="topAvatar">&#129302;</span><div><div class="pn"><span id="topName">GMBIT AI</span><span class="lead" id="topLead"></span></div><div class="tray" id="topTray"></div></div></div>
+      <div class="pp"><span class="pav" id="topAvatar">&#129302;</span><div><div class="pn"><span id="topName">ROOK AI</span><span class="lead" id="topLead"></span></div><div class="tray" id="topTray"></div></div></div>
       <div style="display:flex;align-items:center;gap:8px"><span class="chips" id="topChips">10,000 <small>&#9670;</small></span><span class="clock" id="topClock" style="display:none">5:00</span></div>
     </div>
 
@@ -247,7 +247,7 @@
     <div class="modes" id="modes"></div>
 
     <div class="card setup">
-      <div class="setrow"><span class="setlbl">Opponent</span><div class="seg" id="oppSeg"><button data-opp="ai" class="on">GMBIT AI</button><button data-opp="human">2 players</button></div></div>
+      <div class="setrow"><span class="setlbl">Opponent</span><div class="seg" id="oppSeg"><button data-opp="ai" class="on">ROOK AI</button><button data-opp="human">2 players</button></div></div>
       <div class="setrow" id="diffBox"><span class="setlbl">AI strength</span><div class="seg" id="diffSeg"><button data-d="1">Easy</button><button data-d="2" class="on">Club</button><button data-d="3">Sharp</button></div></div>
       <div class="setrow"><span class="setlbl">Hints</span><div class="seg" id="hintSeg"><button data-h="on" class="on">On</button><button data-h="off">Off</button></div></div>
       <div class="purist" id="puristTag">Hints on &middot; no Purist bonus this game</div>
@@ -267,7 +267,7 @@
 <div class="overlay" id="learnOverlay"><div class="card learn">
   <button class="lclose" id="learnClose">&times;</button>
   <h2>How to play</h2>
-  <div class="ltabs" id="ltabs"><button data-t="pieces" class="on">The pieces</button><button data-t="rules">Goal &amp; rules</button><button data-t="gmbit">How GMBIT works</button></div>
+  <div class="ltabs" id="ltabs"><button data-t="pieces" class="on">The pieces</button><button data-t="rules">Goal &amp; rules</button><button data-t="gmbit">How ROOK works</button></div>
   <div class="lpane" id="pane-pieces">
     <div class="trainer">
       <div class="mini" id="mini"></div>
@@ -292,7 +292,7 @@
   <p>Track your progress, climb levels, stack &#9670; Diamonds.</p>
   <input class="tinput" id="handleInput" maxlength="18" placeholder="Pick a handle" autocomplete="off">
   <div class="avgrid" id="avatarPick"></div>
-  <button class="ctl primary" id="createBtn" style="width:100%">Enter GMBIT</button>
+  <button class="ctl primary" id="createBtn" style="width:100%">Enter ROOK</button>
 </div></div>
 <div class="overlay" id="profileOverlay"><div class="card profile">
   <button class="lclose" id="profileClose">&times;</button>
@@ -325,7 +325,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ===== GMBIT engine — perft-verified (startpos d4=197281, Kiwipete d3=97862, promo d4=182838) ===== */
+/* ===== ROOK engine — perft-verified (startpos d4=197281, Kiwipete d3=97862, promo d4=182838) ===== */
 const KNIGHT=[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
 const KINGD=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
 const ROOK=[[-1,0],[1,0],[0,-1],[0,1]];const BISHOP=[[-1,-1],[-1,1],[1,-1],[1,1]];const QUEEN=ROOK.concat(BISHOP);
@@ -403,7 +403,7 @@ function saveProfile(){try{localStorage.setItem(STORE_KEY,JSON.stringify(profile
 function xpForLevel(L){return 50*L*(L-1);}
 function levelFromXP(xp){let L=1;while(50*(L+1)*L<=xp)L++;return L;}
 function levelProgress(){const cur=xpForLevel(profile.level),next=xpForLevel(profile.level+1);return{cur,next,pct:next>cur?Math.max(0,Math.min(1,(profile.xp-cur)/(next-cur))):1};}
-function titleFor(L){return TITLES[Math.min(L,TITLES.length)-1]||'GMBIT Legend';}
+function titleFor(L){return TITLES[Math.min(L,TITLES.length)-1]||'ROOK Legend';}
 function frameTier(L){return L>=10?'diamond':L>=8?'platinum':L>=5?'gold':L>=3?'silver':'bronze';}
 function dstr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 const todayStr=()=>dstr(new Date());
@@ -475,7 +475,7 @@ function render(){
   $('topChips').innerHTML=fmt(state.chips.b)+' <small>◆</small>';
   $('potAmt').innerHTML='◆ '+fmt(state.pot);
   if(typeof renderProfile==='function')renderProfile();
-  $('topName').textContent=state.vsAI?'GMBIT AI':'Black (P2)';
+  $('topName').textContent=state.vsAI?'ROOK AI':'Black (P2)';
   $('botName').textContent=state.vsAI?'You':'White (P1)';
   // trays + material lead
   $('botTray').innerHTML=missing('b').map(t=>'<span class="cpc pc black">'+svgInner(t)+'</span>').join('');
@@ -490,7 +490,7 @@ function renderClocks(){$('topClock').style.display=state.clockOn?'block':'none'
 function clk(s){const m=Math.floor(s/60),x=Math.floor(s%60);return m+':'+String(x).padStart(2,'0');}
 function renderMoves(){const ml=$('movelist');ml.innerHTML='';for(let k=0;k<state.sans.length;k+=2){const n=document.createElement('div');n.className='n';n.textContent=(k/2+1)+'.';ml.appendChild(n);const wm=document.createElement('div');wm.className='m';wm.textContent=state.sans[k]||'';if(k===state.sans.length-1)wm.classList.add('hl');ml.appendChild(wm);const bm=document.createElement('div');bm.className='m';bm.textContent=state.sans[k+1]||'';if(k+1===state.sans.length-1)bm.classList.add('hl');ml.appendChild(bm);}ml.scrollTop=ml.scrollHeight;}
 function setStatus(html){$('status').innerHTML=html;}
-function updateStatus(){if(state.over)return;const human=!state.vsAI||eng.turn===state.humanColor;const side=eng.turn==='w'?'White':'Black';const label=state.vsAI?(human?'Your move':'GMBIT to move'):side+' to move';if(eng.inCheck(eng.turn))setStatus('<span class="chk">Check!</span> '+label);else setStatus(label);}
+function updateStatus(){if(state.over)return;const human=!state.vsAI||eng.turn===state.humanColor;const side=eng.turn==='w'?'White':'Black';const label=state.vsAI?(human?'Your move':'ROOK to move'):side+' to move';if(eng.inCheck(eng.turn))setStatus('<span class="chk">Check!</span> '+label);else setStatus(label);}
 
 function toSAN(m){let san;if(m.flag==='castleK')san='O-O';else if(m.flag==='castleQ')san='O-O-O';else{const piece=eng.board[m.from],type=piece.toUpperCase();const isCap=eng.board[m.to]!==''||m.flag==='ep';if(type==='P'){san=(isCap?fileC(m.from)+'x':'')+algOf(m.to);if(m.promotion)san+='='+m.promotion;}else{const legal=eng.legalMoves();const amb=legal.filter(x=>(x.from!==m.from)&&eng.board[x.from]===piece&&x.to===m.to);let dis='';if(amb.length){const sameFile=amb.some(x=>(x.from&7)===(m.from&7));const sameRank=amb.some(x=>(x.from>>3)===(m.from>>3));dis=!sameFile?fileC(m.from):(!sameRank?rankC(m.from):algOf(m.from));}san=type+dis+(isCap?'x':'')+algOf(m.to);}}eng.make(m);if(eng.inCheck(eng.turn))san+=eng.legalMoves().length===0?'#':'+';eng.unmake(m);return san;}
 function refreshSuggestion(){state.suggestion=null;const humanTurn=!state.vsAI||eng.turn===state.humanColor;if(state.hintsOn&&!state.over&&!state.thinking&&humanTurn){const m=bestMove(eng,2);if(m){state.suggestion=m;state.purist=false;}}}
@@ -518,12 +518,12 @@ function commit(m){
   if(state.vsAI&&eng.turn!==state.humanColor)scheduleAI();
 }
 function animateMove(from,to,wasCap){try{const board=$('board');const fs=board.querySelector('.sq[data-i="'+from+'"]');const ts=board.querySelector('.sq[data-i="'+to+'"]');if(!fs||!ts)return;if(wasCap)ts.classList.add('capflash');const pc=ts.querySelector('.pc');if(!pc)return;const fr=fs.getBoundingClientRect(),tr=ts.getBoundingClientRect();const dx=fr.left-tr.left,dy=fr.top-tr.top;if(!dx&&!dy)return;pc.style.transition='none';pc.style.transform='translate('+dx+'px,'+dy+'px)';requestAnimationFrame(()=>requestAnimationFrame(()=>{pc.style.transition='transform .18s cubic-bezier(.4,0,.2,1)';pc.style.transform='translate(0,0)';}));}catch(e){}}
-function scheduleAI(){state.thinking=true;setStatus('<span class="accent">GMBIT</span> is thinking…');setTimeout(()=>{const m=bestMove(eng,state.aiDepth);state.thinking=false;if(m)commit(m);else checkEnd();},180);}
+function scheduleAI(){state.thinking=true;setStatus('<span class="accent">ROOK</span> is thinking…');setTimeout(()=>{const m=bestMove(eng,state.aiDepth);state.thinking=false;if(m)commit(m);else checkEnd();},180);}
 function checkEnd(){const moves=eng.legalMoves();if(moves.length>0)return false;if(eng.inCheck(eng.turn)){const winner=eng.turn==='w'?'b':'w';endGame(winner,'Checkmate',(winner==='w'?'White':'Black')+' delivers mate.');}else{endGame(null,'Stalemate','No legal moves — the pot is split.');}return true;}
 function endGame(winner,title,sub){
   state.over=true;stopClock();const pot=state.pot;let msg;
   if(winner===null){state.chips.w+=pot/2;state.chips.b+=pot/2;msg='Pot ◆ '+fmt(pot)+' returned (split).';}
-  else{state.chips[winner]+=pot;let bonus=0;if(state.purist&&pot>0&&((!state.vsAI)||winner===state.humanColor)){bonus=Math.round(pot*0.5);state.chips[winner]+=bonus;}const who=state.vsAI?(winner===state.humanColor?'You win':'GMBIT wins'):((winner==='w'?'White':'Black')+' wins');msg=who+' the pot — ◆ '+fmt(pot)+(bonus?'  ·  Purist bonus +◆'+fmt(bonus):'');}
+  else{state.chips[winner]+=pot;let bonus=0;if(state.purist&&pot>0&&((!state.vsAI)||winner===state.humanColor)){bonus=Math.round(pot*0.5);state.chips[winner]+=bonus;}const who=state.vsAI?(winner===state.humanColor?'You win':'ROOK wins'):((winner==='w'?'White':'Black')+' wins');msg=who+' the pot — ◆ '+fmt(pot)+(bonus?'  ·  Purist bonus +◆'+fmt(bonus):'');}
   state.pot=0;if(state.vsAI&&profile){profile.diamonds=state.chips.w;settleProfileResult(winner);saveProfile();renderProfile();}$('overTitle').textContent=title;$('overSub').textContent=sub;$('overPot').textContent=msg;$('overOverlay').classList.add('show');setStatus('<span class="accent">'+title+'</span>');render();
   if(state.chips.w<=0||state.chips.b<=0)setTimeout(()=>toast('Stack empty — New Game refills the faucet'),900);
 }
@@ -591,7 +591,7 @@ $('createBtn').onclick=()=>{const h=($('handleInput').value||'').trim().slice(0,
 
 ensureProfile(()=>{layout();buildModes();buildAntes();buildPbtns();newGame();});
 
-window.GMBIT={eng,state,newGame,undo,resign,openLearn,legalCount:()=>eng.legalMoves().length,
+window.ROOK={eng,state,newGame,undo,resign,openLearn,legalCount:()=>eng.legalMoves().length,
   getProfile:()=>profile,buildModes,claimDaily,dailyClaimable:()=>dailyClaimable(),levelFromXP,titleFor,settleResult:(wn)=>{settleProfileResult(wn);saveProfile();renderProfile();},
   doUCI:(u)=>{const from=eng.algToIdx(u.slice(0,2)),to=eng.algToIdx(u.slice(2,4)),pr=u[4]?u[4].toUpperCase():'';const m=eng.legalMoves().find(x=>x.from===from&&x.to===to&&(pr?x.promotion===pr:!x.promotion));if(!m)return false;commit(m);return true;},
   aiPick:(d)=>bestMove(eng,d||2),setHints:(on)=>{state.hintsOn=on;refreshSuggestion();render();}};
