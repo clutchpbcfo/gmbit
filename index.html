@@ -139,7 +139,8 @@ if(sk)sk.addEventListener('click',reveal);
 <div id="app"></div>
 <div id="vignette"></div>
 <div id="checkFlash"></div>
-<div class="loading" id="loading"><div class="spin"></div><div>Entering the arena…</div></div>
+<div class="loading" id="loading"><div class="spin"></div><div id="loadmsg">Carving the arena…</div></div>
+<script>(function(){var msgs=['Carving the arena…','Polishing the gold…','Setting the pieces…','Lighting the board…'];var i=0,el=null;var t=setInterval(function(){el=el||document.getElementById('loadmsg');if(!el){return;}i=(i+1)%msgs.length;el.textContent=msgs[i];if(!document.getElementById('loading')||document.getElementById('loading').style.display==='none')clearInterval(t);},900);})();</script>
 <div id="intro"><div class="introcard">
   <div class="intrologo">RO<b>O</b>K</div>
   <div class="introtag">Premium 3D chess &middot; ranked Elo, vs AI, or 4-player</div>
@@ -148,7 +149,8 @@ if(sk)sk.addEventListener('click',reveal);
     <button id="playBtn">♟&nbsp;Ranked PvP</button>
   </div>
   <button class="introsub" id="playAI">or play the computer</button>
-  <div><a class="introsub" href="chess4.html" style="display:inline-block;margin-top:12px;color:var(--gold)">&#9819; New — 4-Player Free-for-All &rarr;</a></div>
+  <div style="margin-top:12px"><a href="chess4.html" style="display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;border:1px solid var(--gold-d);border-radius:12px;padding:11px 16px;color:var(--gold);font-weight:700;font-size:14px;background:rgba(216,178,90,.08)">&#9819; 4-PLAYER FREE-FOR-ALL <span style="font-size:10px;border:1px solid var(--gold-d);border-radius:99px;padding:2px 8px;letter-spacing:.1em">NEW</span></a></div>
+  <div class="introhint" id="introStakes" style="min-height:15px"></div>
   <div class="introhint">Live 1v1 &middot; 5-minute clock &middot; drag to orbit, tap a piece to move</div><div class="introsub" style="margin-top:14px;display:flex;gap:20px;justify-content:center"><a id="introLb" style="cursor:pointer;color:var(--gold)">🏆 Leaderboard</a><a id="introProf" style="cursor:pointer">👤 Profile</a></div>
 </div></div>
 <button id="feedback" type="button" style="cursor:pointer;font-family:var(--ui)">&#10022; Feedback</button>
@@ -156,7 +158,7 @@ if(sk)sk.addEventListener('click',reveal);
 <div class="top">
   <div class="brand glass" style="padding:9px 15px;border-radius:999px"><a class="logo" href="https://clutchpbcfo.github.io/arcade-shell/" style="text-decoration:none" title="back to the arcade">RO<b>O</b>K</a></div>
   <div class="turnpill glass" id="turnPill"><span class="dotc"></span><span id="turnText">Your move</span></div>
-  <div class="wallet glass" id="wallet">◆ <span id="diaAmt">10,000</span></div>
+  <div class="wallet glass" id="wallet" title="diamonds — earned from wins, server-tracked">◆ <span id="diaAmt">—</span></div>
 </div>
 
 <div id="netbar" class="glass">
@@ -374,11 +376,21 @@ function squareClick(sq){
   if(state.sel>=0){const m=state.legal.find(x=>x.to===sq);if(m){const promos=state.legal.filter(x=>x.from===state.sel&&x.to===sq&&x.promotion);if(promos.length){openPromo(promos);return;}state.sel=-1;state.legal=[];doMove(m);return;}}
   const p=eng.board[sq];
   const mine=(state.vsAI||state.online)?colorOf(p)===state.human:true;
-  if(p&&colorOf(p)===eng.turn&&mine){state.sel=sq;state.legal=eng.legalMoves().filter(x=>x.from===sq);}
+  if(p&&colorOf(p)===eng.turn&&mine){state.sel=sq;state.legal=eng.legalMoves().filter(x=>x.from===sq);coachStep(2);}
   else{state.sel=-1;state.legal=[];}
   drawHighlights();
 }
+/* ── first-game coach (one-time, localStorage-gated) ── */
+let _coachDone=true, _coachStage=0;
+try{ _coachDone = localStorage.getItem('gmbit_coached')==='1'; }catch(e){}
+function coachStep(stage){
+  if(_coachDone||stage<=_coachStage) return; _coachStage=stage;
+  if(stage===1) toast('Tap one of your pieces to see its moves');
+  if(stage===2) toast('Gold squares are legal — tap one to move');
+  if(stage===3){ toast('Drag anywhere to orbit the board'); _coachDone=true; try{ localStorage.setItem('gmbit_coached','1'); }catch(e){} }
+}
 function doMove(m,fromNet){
+  if(!fromNet) setTimeout(()=>coachStep(3),700);
   const san=toSAN(m);
   const from=m.from,to=m.to;
   const cap=eng.board[to]!==''||m.flag==='ep';
@@ -423,7 +435,12 @@ function endGame(winner,reason){
   else if(state.online){const you=winner===state.human;accent=you;title=you?'Victory':'Defeat';
     sub=reason==='time'?(you?'Your opponent flagged — out of time.':'You ran out of time.'):reason==='resign'?(you?'Your opponent resigned.':'You resigned.'):reason==='abandon'?(you?'Your opponent left the match.':'You left the match.'):(you?'Checkmate — well played.':'Checkmate — better luck next time.');
     }
-  else if(state.vsAI){const youWin=winner===state.human;accent=youWin;title='Checkmate';sub=youWin?'You win the arena.':'ROOK takes this one.';postCasual('ai',youWin);}
+  else if(state.vsAI){const youWin=winner===state.human;accent=youWin;title='Checkmate';sub=youWin?'You win the arena.':'ROOK takes this one.';postCasual('ai',youWin);
+    if(youWin){ (async()=>{ try{ const d=await apiGet('?op=top&board=elo'); const t=(d&&d.top)||[];
+      const elx=$('overSub'); if(!elx) return;
+      if(!t.length){ elx.innerHTML+=('<br><span style="color:var(--gold);font-size:13px">The ranked ladder is wide open — your first PvP win takes #1.</span>'); }
+      else { elx.innerHTML+=('<br><span style="color:var(--gold);font-size:13px">Ready for ranked? '+t[0].handle+' holds the ladder at '+t[0].elo+'.</span>'); }
+    }catch(e){} })(); }}
   else{title='Checkmate';sub=(winner==='w'?'White':'Black')+' wins.';}
   try{localStorage.setItem('gmbit_dia',state.dia);}catch(e){}
   $('overTitle').innerHTML=accent?'<span class="accent">'+title+'</span>':title;
@@ -506,7 +523,7 @@ $('fbSend').onclick=async()=>{const msg=$('fbMsg').value.trim();if(!msg){$('fbMs
 $('btnMusic').onclick=()=>{musicOn=!musicOn;$('btnMusic').style.opacity=musicOn?'1':'0.5';$('btnMusic').lastChild.textContent=musicOn?'Music':'Muted';if(musicOn)startMusic();else stopMusic();};
 function enterArena(){$('intro').style.display='none';if(musicOn)startMusic();}
 $('playBtn').onclick=()=>{enterArena();startQuickMatch();};
-$('playAI').onclick=()=>{enterArena();setMode('ai');};
+$('playAI').onclick=()=>{enterArena();setMode('ai');setTimeout(()=>coachStep(1),900);};
 try{const _n=localStorage.getItem('gmbit_name');if(_n&&$('nameInput'))$('nameInput').value=_n;}catch(e){}
 window.addEventListener('pointerdown',()=>{if(musicOn)startMusic();},{once:true});
 let hintTimer=setTimeout(()=>{const h=$('hintBar');if(h)h.style.opacity='0';},6000);
@@ -519,6 +536,16 @@ requestAnimationFrame(loop);
 
 /* ===== online multiplayer (Quick Match) ===== */
 const API='https://www.stakit.app/api/rook';
+/* intro stakes line: your ladder position, or the open-ladder callout */
+(async function(){ const el=$('introStakes'); if(!el) return;
+  try{ let n=''; try{ n=localStorage.getItem('gmbit_name')||''; }catch(e){}
+    if(n){ const p=await apiGet('?op=profile&handle='+encodeURIComponent(n));
+      if(p&&typeof p.elo==='number'){ const g=(p.w+p.l+p.d)||0;
+        el.innerHTML='<span style="color:var(--gold)">'+n+' · '+p.elo+' Elo · '+p.w+'-'+p.l+'-'+p.d+'</span>'; return; } }
+    const d=await apiGet('?op=top&board=elo'); const t=(d&&d.top)||[];
+    if(t.length){ el.innerHTML='ladder leader: <span style="color:var(--gold)">'+t[0].handle+' · '+t[0].elo+' Elo</span> — take the seat'; }
+    else { el.innerHTML='<span style="color:var(--gold)">the ranked ladder is wide open — first win takes #1</span>'; }
+  }catch(e){} })();
 const netQueue=[];
 function apiPost(path,body){return fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json());}
 function apiGet(path){return fetch(API+path).then(r=>r.json());}
